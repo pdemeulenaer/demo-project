@@ -29,15 +29,34 @@ stages:
           # - script: pip install typed_ast && make lint
           #   displayName: Lint
 
+          - script: |
+              python -m pip install flake8
+              flake8 .
+            displayName: 'Run lint tests'          
+
           - script: pip install pathlib2 && make test
             displayName: Test
+          
+            #other test capability
+          - script: |
+              pip install pytest
+              pip install pytest-cov
+              pytest tests --doctest-modules --junitxml=junit/test-results.xml --cov=. --cov-report=xml --cov-report=html
+            displayName: 'Test with pytest'
+
+          # - task: PublishTestResults@2
+          #   displayName: "Publish Test Results junit/*"
+          #   condition: always()
+          #   inputs:
+          #     testResultsFiles: "junit/*"
+          #     testRunTitle: "Python $(python.version)"
 
           - task: PublishTestResults@2
-            displayName: "Publish Test Results junit/*"
-            condition: always()
+            condition: succeededOrFailed()
             inputs:
-              testResultsFiles: "junit/*"
-              testRunTitle: "Python $(python.version)"
+              testResultsFiles: '**/test-*.xml'
+              testRunTitle: 'Publish test results for Python $(python.version)'
+
 
   - stage: Build
     dependsOn: Test
