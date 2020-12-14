@@ -26,15 +26,15 @@ stages:
           - script: pip install pipenv && pipenv install -d --system --deploy --ignore-pipfile
             displayName: "Install dependencies"
 
-          # - script: pip install typed_ast && make lint
-          #   displayName: Lint
+          - script: pip install typed_ast && make lint
+            displayName: Lint
 
-          # - script: pip install pathlib2 && make test
-          #   displayName: Test
+          - script: pip install pathlib2 && make test
+            displayName: Test
 
-          # - task: PublishTestResults@2
-          #   displayName: "Publish Test Results junit/*"
-          #   condition: always()
-          #   inputs:
-          #     testResultsFiles: "junit/*"
-          #     testRunTitle: "Python $(python.version)"
+          - task: PublishTestResults@2
+            displayName: "Publish Test Results junit/*"
+            condition: always()
+            inputs:
+              testResultsFiles: "junit/*"
+              testRunTitle: "Python $(python.version)"
