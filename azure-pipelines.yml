@@ -2,7 +2,7 @@ resources:
   - repo: self
 
 trigger:
-  - master
+  - main
   - refs/tags/v*
 
 variables:
