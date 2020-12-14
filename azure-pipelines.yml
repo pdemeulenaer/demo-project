@@ -37,7 +37,7 @@ stages:
           - script: pip install pathlib2 && make test
             displayName: Test
           
-            #other test capability
+          #other test capability          
           - script: |
               pip install pytest
               pip install pytest-cov
@@ -56,6 +56,12 @@ stages:
             inputs:
               testResultsFiles: '**/test-*.xml'
               testRunTitle: 'Publish test results for Python $(python.version)'
+              
+          - task: PublishCodeCoverageResults@1
+            inputs:
+              codeCoverageTool: Cobertura
+              summaryFileLocation: '$(System.DefaultWorkingDirectory)/**/coverage.xml'
+              reportDirectory: '$(System.DefaultWorkingDirectory)/**/htmlcov'              
 
 
   - stage: Build
