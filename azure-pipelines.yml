@@ -1,0 +1,40 @@
+resources:
+  - repo: self
+
+trigger:
+  - master
+  - refs/tags/v*
+
+variables:
+  python.version: "3.8"
+  major_minor: $[format('{0:yy}.{0:MM}', pipeline.startTime)]
+  counter_unique_key: $[format('{0}.demo', variables.major_minor)]
+  patch: $[counter(variables.counter_unique_key, 0)]
+  fallback_tag: $(major_minor).dev$(patch)
+
+stages:
+  - stage: Test
+    jobs:
+      - job: Test
+        displayName: Test
+        steps:
+          - task: UsePythonVersion@0
+            displayName: "Use Python $(python.version)"
+            inputs:
+              versionSpec: "$(python.version)"
+
+          - script: pip install pipenv && pipenv install -d --system --deploy --ignore-pipfile
+            displayName: "Install dependencies"
+
+          - script: pip install typed_ast && make lint
+            displayName: Lint
+
+          - script: pip install pathlib2 && make test
+            displayName: Test
+
+          - task: PublishTestResults@2
+            displayName: "Publish Test Results junit/*"
+            condition: always()
+            inputs:
+              testResultsFiles: "junit/*"
+              testRunTitle: "Python $(python.version)"
