@@ -2,7 +2,7 @@ resources:
   - repo: self
 
 trigger:
-  - master
+  - main
   - refs/tags/v*
 
 variables:
@@ -29,8 +29,21 @@ stages:
           # - script: pip install typed_ast && make lint
           #   displayName: Lint
 
-          # - script: pip install pathlib2 && make test
-          #   displayName: Test
+          - script: |
+              python -m pip install flake8
+              flake8 .
+            displayName: 'Run lint tests'
+            continueOnError: true
+
+          - script: pip install pathlib2 && make test
+            displayName: Test
+          
+          #other test capability          
+          - script: |
+              pip install pytest
+              pip install pytest-cov
+              pytest tests --doctest-modules --junitxml=junit/test-results.xml --cov=. --cov-report=xml --cov-report=html
+            displayName: 'Test with pytest'
 
           # - task: PublishTestResults@2
           #   displayName: "Publish Test Results junit/*"
@@ -38,3 +51,65 @@ stages:
           #   inputs:
           #     testResultsFiles: "junit/*"
           #     testRunTitle: "Python $(python.version)"
+
+          - task: PublishTestResults@2
+            condition: succeededOrFailed()
+            inputs:
+              testResultsFiles: '**/test-*.xml'
+              testRunTitle: 'Publish test results for Python $(python.version)'
+              
+          - task: PublishCodeCoverageResults@1
+            inputs:
+              codeCoverageTool: Cobertura
+              summaryFileLocation: '$(System.DefaultWorkingDirectory)/**/coverage.xml'
+              reportDirectory: '$(System.DefaultWorkingDirectory)/**/htmlcov'              
+
+
+  - stage: Build
+    dependsOn: Test
+    jobs:
+      - job: Build
+        displayName: Build
+        steps:
+          - task: UsePythonVersion@0
+            displayName: "Use Python $(python.version)"
+            inputs:
+              versionSpec: "$(python.version)"
+
+          - script: "pip install wheel"
+            displayName: "Wheel"
+
+          - script: |
+              # Get version from git tag (v1.0.0) -> (1.0.0)
+              git_tag=`git describe --abbrev=0 --tags | cut -d'v' -f 2`
+              echo "##vso[task.setvariable variable=git_tag]$git_tag"
+            displayName: Set GIT_TAG variable if tag is pushed
+            condition: contains(variables['Build.SourceBranch'], 'refs/tags/v')
+
+          - script: |
+              # Get variables that are shared across jobs
+              GIT_TAG=$(git_tag)
+              FALLBACK_TAG=$(fallback_tag)
+              echo GIT TAG: $GIT_TAG, FALLBACK_TAG: $FALLBACK_TAG
+
+              # Export variable so python can access it
+              export PACKAGE_VERSION=${GIT_TAG:-${FALLBACK_TAG:-default}}
+              echo Version used in setup.py: $PACKAGE_VERSION
+
+              # Use PACKAGE_VERSION in setup()
+              python setup.py bdist_wheel
+            displayName: Build
+
+          - task: CopyFiles@2
+            displayName: Copy dist files
+            inputs:
+              sourceFolder: dist/
+              contents: demo*.whl
+              targetFolder: $(Build.ArtifactStagingDirectory)
+              flattenFolders: true
+
+          - task: PublishBuildArtifacts@1
+            displayName: PublishArtifact
+            inputs:
+              pathtoPublish: $(Build.ArtifactStagingDirectory)
+              ArtifactName: demo.whl              
