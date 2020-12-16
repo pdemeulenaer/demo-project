@@ -116,6 +116,13 @@ stages:
               pathtoPublish: $(Build.ArtifactStagingDirectory)
               ArtifactName: demo.whl
 
+    # - task: PublishBuildArtifacts@1
+    #   inputs:
+    #     PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+    #     artifactName: 'drop'
+    #     publishLocation: 'Container'
+    #   displayName: 'Publish documentation as artifact'
+
   - stage: Deploy
     dependsOn: Build
     jobs:
@@ -128,6 +135,11 @@ stages:
             displayName: "Use Python $(python.version)"
             inputs:
               versionSpec: "$(python.version)"
+              
+          - task: DownloadBuildArtifacts@0
+            inputs:
+              artifactName: demo.whl
+              downloadPath: '$(Build.ArtifactStagingDirectory)'                 
             
           - task: databricksDeployDBFSFilesTask@0
             inputs:
