@@ -146,7 +146,7 @@ stages:
               authMethod: 'bearer'
               bearerToken: '$(databricks-token)'
               region: 'westeurope'
-              LocalRootFolder: '$(System.DefaultWorkingDirectory)/demo.whl'
+              LocalRootFolder: '$(Build.ArtifactStagingDirectory)/demo.whl'
               FilePattern: '*.*.whl'
               TargetLocation: '/libraries/'
 
