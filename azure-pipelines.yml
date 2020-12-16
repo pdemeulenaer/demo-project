@@ -26,45 +26,45 @@ stages:
           - script: pip install pipenv && pipenv install -d --system --deploy --ignore-pipfile
             displayName: "Install dependencies"
 
-          # # - script: pip install typed_ast && make lint
-          # #   displayName: Lint
+          # - script: pip install typed_ast && make lint
+          #   displayName: Lint
 
-          # - script: |
-          #     python -m pip install flake8
-          #     flake8 .
-          #   displayName: 'Run lint tests'
-          #   continueOnError: true
+          - script: |
+              python -m pip install flake8
+              flake8 .
+            displayName: 'Run lint tests'
+            continueOnError: true
 
-          # - script: pip install pathlib2 && make test
-          #   displayName: Test
-          #   continueOnError: true
+          - script: pip install pathlib2 && make test
+            displayName: Test
+            continueOnError: true
           
-          # #other test capability          
-          # - script: |
-          #     pip install pytest
-          #     pip install pytest-cov
-          #     pytest tests --doctest-modules --junitxml=junit/test-results.xml --cov=. -v --cov-report=xml --cov-report=html
-          #   displayName: 'Test with pytest'
-          #   continueOnError: true
-
-          # # - task: PublishTestResults@2
-          # #   displayName: "Publish Test Results junit/*"
-          # #   condition: always()
-          # #   inputs:
-          # #     testResultsFiles: "junit/*"
-          # #     testRunTitle: "Python $(python.version)"
+          #other test capability          
+          - script: |
+              pip install pytest
+              pip install pytest-cov
+              pytest tests --doctest-modules --junitxml=junit/test-results.xml --cov=. -v --cov-report=xml --cov-report=html
+            displayName: 'Test with pytest'
+            continueOnError: true
 
           # - task: PublishTestResults@2
-          #   condition: succeededOrFailed()
+          #   displayName: "Publish Test Results junit/*"
+          #   condition: always()
           #   inputs:
-          #     testResultsFiles: '**/test-*.xml'
-          #     testRunTitle: 'Publish test results for Python $(python.version)'
+          #     testResultsFiles: "junit/*"
+          #     testRunTitle: "Python $(python.version)"
+
+          - task: PublishTestResults@2
+            condition: succeededOrFailed()
+            inputs:
+              testResultsFiles: '**/test-*.xml'
+              testRunTitle: 'Publish test results for Python $(python.version)'
               
-          # - task: PublishCodeCoverageResults@1
-          #   inputs:
-          #     codeCoverageTool: Cobertura
-          #     summaryFileLocation: '$(System.DefaultWorkingDirectory)/**/coverage.xml'
-          #     reportDirectory: '$(System.DefaultWorkingDirectory)/**/htmlcov'              
+          - task: PublishCodeCoverageResults@1
+            inputs:
+              codeCoverageTool: Cobertura
+              summaryFileLocation: '$(System.DefaultWorkingDirectory)/**/coverage.xml'
+              reportDirectory: '$(System.DefaultWorkingDirectory)/**/htmlcov'              
 
 
   - stage: Build
