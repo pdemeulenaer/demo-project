@@ -114,4 +114,24 @@ stages:
             displayName: PublishArtifact
             inputs:
               pathtoPublish: $(Build.ArtifactStagingDirectory)
-              ArtifactName: demo.whl              
+              ArtifactName: demo.whl
+
+  - stage: Deploy
+    dependsOn: Build
+    jobs:
+      - job: Deploy
+        displayName: Deploy
+        steps:
+          - task: UsePythonVersion@0
+            displayName: "Use Python $(python.version)"
+            inputs:
+              versionSpec: "$(python.version)"
+            
+          - task: databricksDeployDBFSFilesTask@0
+            inputs:
+              authMethod: 'bearer'
+              bearerToken: '$(databricks-token)'
+              region: 'westeurope'
+              LocalRootFolder: '$(System.DefaultWorkingDirectory)/_pdemeulenaer.demo-project/demo.whl'
+              FilePattern: '*.*.whl'
+              TargetLocation: '/libraries/'
