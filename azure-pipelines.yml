@@ -27,8 +27,8 @@ stages:
             inputs:
               SonarCloud: 'SonarCloud'
               organization: 'pdemeulenaer'
-              scannerMode: 'MSBuild'
-              projectKey: 'pdemeulenaer_demo-project'
+              scannerMode: 'CLI'
+              configMode: 'file'
               extraProperties: |
                 # Additional properties that will be passed to the scanner, 
                 # Put one key=value per line, example:
