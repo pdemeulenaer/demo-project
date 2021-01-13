@@ -9,13 +9,14 @@ def main(filepath, value):
     """Read in data, add a column `added_column`."""
     spark = SparkSession.builder.getOrCreate()
 
-    spark_home = os.environ.get('SPARK_HOME', None)
-    if spark_home is None:  # means databricks
+    databricks_check = os.environ.get('DATABRICKS_HOST', None)
+    #if 'databricks' in spark_home:
+    if databricks_check is not None:
         cwd = "/"
     else:
         cwd = ""
 
-    print(cwd, spark_home)
+    print(cwd, databricks_check)
 
     return (
         spark.read
