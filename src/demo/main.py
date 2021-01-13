@@ -10,7 +10,6 @@ def main(filepath, value):
     spark = SparkSession.builder.getOrCreate()
 
     databricks_check = os.environ.get('DATABRICKS_HOST', None)
-    #if 'databricks' in spark_home:
     if databricks_check is not None:
         cwd = "/"
     else:
