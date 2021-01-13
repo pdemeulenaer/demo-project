@@ -10,12 +10,12 @@ def main(filepath, value):
     spark = SparkSession.builder.getOrCreate()
 
     spark_home = os.environ.get('SPARK_HOME', None)
-    if 'databricks' in spark_home:
+    if spark_home is None:  # means databricks
         cwd = "/"
     else:
         cwd = ""
 
-    print(spark_home)
+    print(cwd, spark_home)
 
     return (
         spark.read
