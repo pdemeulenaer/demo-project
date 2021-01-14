@@ -50,7 +50,7 @@ stages:
             continueOnError: true
 
           - script: |
-              python -m pip install pylint
+              pip install pylint
               pylint src/ tests/ > pylint_report.txt
             displayName: 'Run lint pylint code analysis'
             continueOnError: false            
