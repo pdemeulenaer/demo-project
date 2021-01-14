@@ -51,9 +51,9 @@ stages:
 
           - script: |
               python -m pip install pylint
-              pylint pylint src/ tests/ > pylint_report.txt
+              pylint src/ tests/ > pylint_report.txt
             displayName: 'Run lint pylint code analysis'
-            continueOnError: true            
+            continueOnError: false            
 
           - script: pip install pathlib2 && make test
             displayName: Test
