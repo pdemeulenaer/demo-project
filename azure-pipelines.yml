@@ -94,87 +94,87 @@ stages:
             inputs:
               pollingTimeoutSec: '300'
 
-  - stage: Build
-    dependsOn: Test
-    jobs:
-      - job: Build
-        displayName: Build
-        steps:
-          - task: UsePythonVersion@0
-            displayName: "Use Python $(python.version)"
-            inputs:
-              versionSpec: "$(python.version)"
+  # - stage: Build
+  #   dependsOn: Test
+  #   jobs:
+  #     - job: Build
+  #       displayName: Build
+  #       steps:
+  #         - task: UsePythonVersion@0
+  #           displayName: "Use Python $(python.version)"
+  #           inputs:
+  #             versionSpec: "$(python.version)"
 
-          - script: "pip install wheel"
-            displayName: "Wheel"
+  #         - script: "pip install wheel"
+  #           displayName: "Wheel"
 
-          - script: |
-              # Get version from git tag (v1.0.0) -> (1.0.0)
-              git_tag=`git describe --abbrev=0 --tags | cut -d'v' -f 2`
-              echo "##vso[task.setvariable variable=git_tag]$git_tag"
-            displayName: Set GIT_TAG variable if tag is pushed
-            condition: contains(variables['Build.SourceBranch'], 'refs/tags/v')
+  #         - script: |
+  #             # Get version from git tag (v1.0.0) -> (1.0.0)
+  #             git_tag=`git describe --abbrev=0 --tags | cut -d'v' -f 2`
+  #             echo "##vso[task.setvariable variable=git_tag]$git_tag"
+  #           displayName: Set GIT_TAG variable if tag is pushed
+  #           condition: contains(variables['Build.SourceBranch'], 'refs/tags/v')
 
-          - script: |
-              # Get variables that are shared across jobs
-              GIT_TAG=$(git_tag)
-              FALLBACK_TAG=$(fallback_tag)
-              echo GIT TAG: $GIT_TAG, FALLBACK_TAG: $FALLBACK_TAG
+  #         - script: |
+  #             # Get variables that are shared across jobs
+  #             GIT_TAG=$(git_tag)
+  #             FALLBACK_TAG=$(fallback_tag)
+  #             echo GIT TAG: $GIT_TAG, FALLBACK_TAG: $FALLBACK_TAG
 
-              # Export variable so python can access it
-              export PACKAGE_VERSION=${GIT_TAG:-${FALLBACK_TAG:-default}}
-              echo Version used in setup.py: $PACKAGE_VERSION
+  #             # Export variable so python can access it
+  #             export PACKAGE_VERSION=${GIT_TAG:-${FALLBACK_TAG:-default}}
+  #             echo Version used in setup.py: $PACKAGE_VERSION
 
-              # Use PACKAGE_VERSION in setup()
-              python setup.py bdist_wheel
-            displayName: Build
+  #             # Use PACKAGE_VERSION in setup()
+  #             python setup.py bdist_wheel
+  #           displayName: Build
 
-          - task: CopyFiles@2
-            displayName: Copy dist files
-            inputs:
-              sourceFolder: dist/
-              contents: demo*.whl
-              targetFolder: $(Build.ArtifactStagingDirectory)
-              flattenFolders: true
+  #         - task: CopyFiles@2
+  #           displayName: Copy dist files
+  #           inputs:
+  #             sourceFolder: dist/
+  #             contents: demo*.whl
+  #             targetFolder: $(Build.ArtifactStagingDirectory)
+  #             flattenFolders: true
 
-          - task: PublishBuildArtifacts@1
-            displayName: PublishArtifact
-            inputs:
-              pathtoPublish: $(Build.ArtifactStagingDirectory)
-              ArtifactName: demo.whl
+  #         - task: PublishBuildArtifacts@1
+  #           displayName: PublishArtifact
+  #           inputs:
+  #             pathtoPublish: $(Build.ArtifactStagingDirectory)
+  #             ArtifactName: demo.whl
 
-    # - task: PublishBuildArtifacts@1
-    #   inputs:
-    #     PathtoPublish: '$(Build.ArtifactStagingDirectory)'
-    #     artifactName: 'drop'
-    #     publishLocation: 'Container'
-    #   displayName: 'Publish documentation as artifact'
+  #   # - task: PublishBuildArtifacts@1
+  #   #   inputs:
+  #   #     PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+  #   #     artifactName: 'drop'
+  #   #     publishLocation: 'Container'
+  #   #   displayName: 'Publish documentation as artifact'
 
-  - stage: Deploy
-    dependsOn: Build
-    jobs:
-      - job: Deploy
-        displayName: Deploy
-        pool:
-          vmImage: 'vs2017-win2016'        
-        steps:
-          - task: UsePythonVersion@0
-            displayName: "Use Python $(python.version)"
-            inputs:
-              versionSpec: "$(python.version)"
+  # - stage: Deploy
+  #   dependsOn: Build
+  #   jobs:
+  #     - job: Deploy
+  #       displayName: Deploy
+  #       pool:
+  #         vmImage: 'vs2017-win2016'        
+  #       steps:
+  #         - task: UsePythonVersion@0
+  #           displayName: "Use Python $(python.version)"
+  #           inputs:
+  #             versionSpec: "$(python.version)"
               
-          - task: DownloadBuildArtifacts@0
-            inputs:
-              artifactName: demo.whl
-              downloadPath: '$(Build.ArtifactStagingDirectory)'                 
+  #         - task: DownloadBuildArtifacts@0
+  #           inputs:
+  #             artifactName: demo.whl
+  #             downloadPath: '$(Build.ArtifactStagingDirectory)'                 
             
-          - task: databricksDeployDBFSFilesTask@0
-            inputs:
-              authMethod: 'bearer'
-              bearerToken: '$(databricks-token)'
-              region: 'westeurope'
-              LocalRootFolder: '$(Build.ArtifactStagingDirectory)/demo.whl'
-              FilePattern: '*.*.whl'
-              TargetLocation: '/libraries/'
+  #         - task: databricksDeployDBFSFilesTask@0
+  #           inputs:
+  #             authMethod: 'bearer'
+  #             bearerToken: '$(databricks-token)'
+  #             region: 'westeurope'
+  #             LocalRootFolder: '$(Build.ArtifactStagingDirectory)/demo.whl'
+  #             FilePattern: '*.*.whl'
+  #             TargetLocation: '/libraries/'
 
-              #LocalRootFolder: '$(System.DefaultWorkingDirectory)/_pdemeulenaer.demo-project/demo.whl'
+  #             #LocalRootFolder: '$(System.DefaultWorkingDirectory)/_pdemeulenaer.demo-project/demo.whl'
