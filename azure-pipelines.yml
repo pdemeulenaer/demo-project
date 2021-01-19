@@ -33,28 +33,22 @@ stages:
                 # Additional properties that will be passed to the scanner, 
                 # Put one key=value per line, example:
                 # Comma-separated paths to directories with sources (required)
-sonar.sources=.
-sonar.exclusions=venv/**, htmlcov/**, tests/**/*
+                sonar.sources=.
+                sonar.exclusions=htmlcov/**, tests/**/*
 
-# Language
-sonar.language=py
+                # Language
+                sonar.language=py
 
-# Linting
-#sonar.python.pylint.reportPaths=$(System.DefaultWorkingDirectory)/pylint_report.txt
-#sonar.python.pylint.reportPath=$(System.DefaultWorkingDirectory)/pylint_report.txt
-sonar.python.pylint.reportPaths=pylint_report.txt
-sonar.python.pylint.reportPath=pylint_report.txt
+                # Linting
+                sonar.python.pylint.reportPaths=pylint_report.txt
+                sonar.python.pylint.reportPath=pylint_report.txt
 
-# Unit tests
-sonar.tests=.
-sonar.test.inclusions=tests/**/*
-sonar.python.xunit.reportPath=junit/test-results.xml
-#sonar.python.xunit.reportPath=$(System.DefaultWorkingDirectory)/**/test-*.xml
-#sonar.testExecutionReportPaths=junit/test-results.xml
-sonar.testExecutionReportPaths=TEST-fake-execution-report.xml
-sonar.python.coverage.reportPaths=coverage.xml
-                sonar.exclusions=htmlcov/**, build/**
-                sonar.python.xunit.reportPaths=$(System.DefaultWorkingDirectory)/**/test-*.xml
+                # Unit tests
+                sonar.tests=.
+                sonar.test.inclusions=tests/**/*
+                sonar.python.xunit.reportPath=junit/test-results.xml
+                #sonar.testExecutionReportPaths=junit/test-results.xml
+                sonar.testExecutionReportPaths=TEST-fake-execution-report.xml
                 sonar.python.coverage.reportPaths=coverage.xml
 
           - script: pip install pipenv && pipenv install -d --system --deploy --ignore-pipfile
