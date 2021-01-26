@@ -1,4 +1,4 @@
 [run]
 omit =
     # omit anything in a .local directory anywhere
-    ./venv/*, ./tests/*
+    ./venv/*, ./tests/*, ./build/*
