@@ -79,7 +79,8 @@ stages:
           - script: |
               pip install pytest
               pip install pytest-cov
-              pytest tests --doctest-modules --junitxml=junit/test-results.xml --cov=. -v --cov-report=xml --cov-report=html
+              #pytest tests --doctest-modules --junitxml=junit/test-results.xml --cov=. -v --cov-report=xml --cov-report=html
+              pytest tests/ --doctest-modules --junitxml=junit/test-results.xml --cov=. -v --ignore='venv/*' --cov-config=$(System.DefaultWorkingDirectory)/.coveragerc --cov-report=xml:$(System.DefaultWorkingDirectory)/coverage.xml 
             displayName: 'Test with pytest'
             continueOnError: true
 
