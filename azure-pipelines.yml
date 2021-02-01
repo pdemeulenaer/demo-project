@@ -33,8 +33,9 @@ stages:
                 # Additional properties that will be passed to the scanner, 
                 # Put one key=value per line, example:
                 # Comma-separated paths to directories with sources (required)
-                sonar.sources=src
+                sonar.sources=.
                 sonar.exclusions=htmlcov/**, tests/**/*
+                sonar.inclusion=**/*.py
 
                 # Language
                 sonar.language=py
@@ -44,7 +45,7 @@ stages:
                 sonar.python.pylint.reportPath=pylint_report.txt
 
                 # Unit tests
-                sonar.tests=src
+                sonar.tests=.
                 sonar.test.inclusions=tests/**/*, **/*.py
                 #sonar.python.xunit.reportPath=junit/test-results.xml
                 #sonar.testExecutionReportPaths=junit/test-results.xml
