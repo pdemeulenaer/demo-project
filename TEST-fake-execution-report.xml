@@ -1,14 +1,7 @@
 <testExecutions version="1">
     <file path="tests/sample_test.py">
-        <testCase name="test_say_hello_to" duration="5"/>
-        <testCase name="test2" duration="500">
-            <skipped message="short message">other</skipped>
-        </testCase>
-        <testCase name="test3" duration="100">
-            <failure message="short">stacktrace</failure>
-        </testCase>
-        <testCase name="test4" duration="500">
+        <testCase name="test_say_hello_to" duration="5">
             <error message="short">stacktrace</error>
-        </testCase>
+        </testCase>        
     </file>
 </testExecutions>
