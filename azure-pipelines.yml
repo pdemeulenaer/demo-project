@@ -36,7 +36,7 @@ stages:
                 sonar.sources=.
                 sonar.exclusions=htmlcov/**
                 #, tests/**/*
-                sonar.inclusion=**/*.py
+                #sonar.inclusion=**/*.py
 
                 # Language
                 sonar.language=py
@@ -47,11 +47,12 @@ stages:
 
                 # Unit tests
                 sonar.tests=.
-                sonar.test.inclusions=tests/**/*, **/*.py
-                #sonar.python.xunit.reportPath=junit/test-results.xml
+                sonar.test.inclusions=tests/**/*
+                #, **/*.py
+                sonar.python.xunit.reportPath=junit/test-results.xml
                 #sonar.testExecutionReportPaths=junit/test-results.xml
-                sonar.testExecutionReportPath=TEST-fake-execution-report.xml
-                sonar.testExecutionReportPaths=TEST-fake-execution-report.xml
+                #sonar.testExecutionReportPath=TEST-fake-execution-report.xml
+                #sonar.testExecutionReportPaths=TEST-fake-execution-report.xml
                 sonar.python.coverage.reportPaths=coverage.xml
 
           - script: pip install pipenv && pipenv install -d --system --deploy --ignore-pipfile
