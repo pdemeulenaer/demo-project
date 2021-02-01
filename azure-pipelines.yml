@@ -34,7 +34,8 @@ stages:
                 # Put one key=value per line, example:
                 # Comma-separated paths to directories with sources (required)
                 sonar.sources=.
-                sonar.exclusions=htmlcov/**, tests/**/*
+                sonar.exclusions=htmlcov/**
+                #, tests/**/*
                 sonar.inclusion=**/*.py
 
                 # Language
