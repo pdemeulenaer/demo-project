@@ -7,7 +7,7 @@ def test_main():
     """Test whether main function works."""
     expected_value = '👍🤞👌🐌'
     assert all([
-        row.added_column == expected_value
+        row.added_column != expected_value
         for row
         in (
             main('mnt/demo/*.csv', expected_value)
