@@ -45,7 +45,7 @@ stages:
 
                 # Unit tests
                 sonar.tests=.
-                sonar.test.inclusions=tests/**/*
+                sonar.test.inclusions=tests/**/*, **/*.py
                 #sonar.python.xunit.reportPath=junit/test-results.xml
                 #sonar.testExecutionReportPaths=junit/test-results.xml
                 sonar.testExecutionReportPath=TEST-fake-execution-report.xml
