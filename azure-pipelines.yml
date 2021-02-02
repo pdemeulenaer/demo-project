@@ -52,7 +52,7 @@ stages:
                 #sonar.python.xunit.reportPath=junit/test-results.xml
                 ##sonar.testExecutionReportPaths=junit/test-results.xml
                 ##sonar.testExecutionReportPath=TEST-fake-execution-report.xml
-                sonar.testExecutionReportPaths=TEST-fake-execution-report.xml
+                #sonar.testExecutionReportPaths=TEST-fake-execution-report.xml
                 sonar.python.coverage.reportPaths=coverage.xml
 
           - script: pip install pipenv && pipenv install -d --system --deploy --ignore-pipfile
@@ -75,9 +75,9 @@ stages:
             displayName: 'Run lint pylint code analysis'
             continueOnError: true            
 
-          - script: pip install pathlib2 && make test
-            displayName: Test
-            continueOnError: true
+          # - script: pip install pathlib2 && make test
+          #   displayName: Test
+          #   continueOnError: true
           
           #other test capability          
           - script: |
