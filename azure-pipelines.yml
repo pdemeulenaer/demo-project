@@ -34,26 +34,26 @@ stages:
                 # Additional properties that will be passed to the scanner, 
                 # Put one key=value per line, example:
                 # Comma-separated paths to directories with sources (required)
-                sonar.sources=.
-                sonar.exclusions=htmlcov/**, tests/**/*
-                #sonar.inclusion=**/*.py
+                # sonar.sources=.
+                # sonar.exclusions=htmlcov/**, tests/**/*
+                # #sonar.inclusion=**/*.py
 
-                # Language
-                sonar.language=py
+                # # Language
+                # sonar.language=py
 
-                # Linting
-                sonar.python.pylint.reportPaths=pylint_report.txt
-                sonar.python.pylint.reportPath=pylint_report.txt
+                # # Linting
+                # sonar.python.pylint.reportPaths=pylint_report.txt
+                # sonar.python.pylint.reportPath=pylint_report.txt
 
-                # Unit tests
-                sonar.tests=.
-                sonar.test.inclusions=tests/**/*
-                #, **/*.py
-                sonar.python.xunit.reportPath=junit/test-results.xml
-                ##sonar.testExecutionReportPaths=junit/test-results.xml
-                ##sonar.testExecutionReportPath=TEST-fake-execution-report.xml
-                #sonar.testExecutionReportPaths=TEST-fake-execution-report.xml
-                sonar.python.coverage.reportPaths=coverage.xml
+                # # Unit tests
+                # sonar.tests=.
+                # sonar.test.inclusions=tests/**/*
+                # #, **/*.py
+                # sonar.python.xunit.reportPath=junit/test-results.xml
+                # ##sonar.testExecutionReportPaths=junit/test-results.xml
+                # ##sonar.testExecutionReportPath=TEST-fake-execution-report.xml
+                # #sonar.testExecutionReportPaths=TEST-fake-execution-report.xml
+                # sonar.python.coverage.reportPaths=coverage.xml
 
           - script: pip install pipenv && pipenv install -d --system --deploy --ignore-pipfile
             displayName: "Install dependencies"
