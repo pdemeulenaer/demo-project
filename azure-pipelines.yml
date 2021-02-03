@@ -23,28 +23,57 @@ stages:
             inputs:
               versionSpec: "$(python.version)"
 
+          # - task: SonarCloudPrepare@1
+          #   inputs:
+          #     SonarCloud: 'SonarCloud'
+          #     organization: 'pdemeulenaer'
+          #     scannerMode: 'CLI'
+          #     configMode: 'file'
+          #     extraProperties: |
+          #       # Additional properties that will be passed to the scanner, 
+          #       # Put one key=value per line, example:
+          #       # Comma-separated paths to directories with sources (required)
+          #       sonar.sources=.
+          #       sonar.exclusions=htmlcov/**, tests/**/*
+          #       #sonar.inclusion=**/*.py
+
+          #       # Language
+          #       sonar.language=py
+
+          #       # Linting
+          #       sonar.python.pylint.reportPaths=pylint_report.txt
+          #       sonar.python.pylint.reportPath=pylint_report.txt
+
+          #       # Unit tests
+          #       sonar.tests=.
+          #       sonar.test.inclusions=tests/**/*
+          #       #, **/*.py
+          #       sonar.python.xunit.reportPath=junit/test-results.xml
+          #       ##sonar.testExecutionReportPaths=junit/test-results.xml
+          #       ##sonar.testExecutionReportPath=TEST-fake-execution-report.xml
+          #       #sonar.testExecutionReportPaths=TEST-fake-execution-report.xml
+          #       sonar.python.coverage.reportPaths=coverage.xml
+
           - task: SonarCloudPrepare@1
             inputs:
               SonarCloud: 'SonarCloud'
               organization: 'pdemeulenaer'
               scannerMode: 'CLI'
-              configMode: 'file'
+              configMode: 'manual'
+              cliProjectKey: 'pdemeulenaer_demo-project'
+              cliProjectName: 'pdemeulenaer_demo-project'
+              cliSources: '.'
               extraProperties: |
-                # Additional properties that will be passed to the scanner, 
-                # Put one key=value per line, example:
-                # Comma-separated paths to directories with sources (required)
+                # Additional properties that will be passed to the scanner:
                 sonar.sources=.
-                sonar.exclusions=htmlcov/**
-                #, tests/**/*
+                sonar.exclusions=htmlcov/**, tests/**/*
                 #sonar.inclusion=**/*.py
-
                 # Language
                 sonar.language=py
-
+                # Encoding
+                sonar.sourceEncoding=UTF-8
                 # Linting
                 sonar.python.pylint.reportPaths=pylint_report.txt
-                sonar.python.pylint.reportPath=pylint_report.txt
-
                 # Unit tests
                 sonar.tests=.
                 sonar.test.inclusions=tests/**/*
@@ -53,7 +82,7 @@ stages:
                 ##sonar.testExecutionReportPaths=junit/test-results.xml
                 ##sonar.testExecutionReportPath=TEST-fake-execution-report.xml
                 #sonar.testExecutionReportPaths=TEST-fake-execution-report.xml
-                sonar.python.coverage.reportPaths=coverage.xml
+                sonar.python.coverage.reportPaths=coverage.xml   
 
           - script: pip install pipenv && pipenv install -d --system --deploy --ignore-pipfile
             displayName: "Install dependencies"
