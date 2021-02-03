@@ -3,6 +3,7 @@ resources:
 
 trigger:
   - main
+  - feature/*
   - refs/tags/v*
 
 variables:
