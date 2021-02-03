@@ -34,9 +34,7 @@ stages:
                 # Put one key=value per line, example:
                 # Comma-separated paths to directories with sources (required)
                 sonar.sources=.
-                sonar.exclusions=htmlcov/**
-                #, tests/**/*
-                #sonar.inclusion=**/*.py
+                sonar.exclusions=htmlcov/**, tests/**/*
 
                 # Language
                 sonar.language=py
@@ -48,7 +46,6 @@ stages:
                 # Unit tests
                 sonar.tests=.
                 sonar.test.inclusions=tests/**/*
-                #, **/*.py
                 sonar.python.xunit.reportPath=junit/test-results.xml
                 ##sonar.testExecutionReportPaths=junit/test-results.xml
                 ##sonar.testExecutionReportPath=TEST-fake-execution-report.xml
