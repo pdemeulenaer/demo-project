@@ -298,7 +298,7 @@ stages:
               targetType: 'inline'
               script: |
                 databricks fs rm dbfs:/libraries/$(library_name)
-                databricks fs cp $(Build.ArtifactStagingDirectory)/demo.whl dbfs:/libraries/$(library_name)
+                databricks fs cp $(Build.ArtifactStagingDirectory)/demo.whl/$(library_name) dbfs:/libraries/$(library_name)
 
           - task: Bash@3
             displayName: 'Install the library'
