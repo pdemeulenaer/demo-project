@@ -194,6 +194,12 @@ stages:
               echo $(library_name)
             displayName: "Extract the name of the package"
 
+          - task: Bash@3
+            displayName: 'Extract the name of the package 2'
+            inputs:
+              targetType: 'inline'
+              script: 'echo $(library_name)'
+
           - task: CopyFiles@2
             displayName: Copy dist files
             inputs:
@@ -252,7 +258,6 @@ stages:
             inputs:
               targetType: 'inline'
               script: 'pip install -U databricks-cli'
-
           - task: Bash@3
             displayName: 'Configure Databricks CLI'
             inputs:
@@ -265,7 +270,8 @@ stages:
                 $(databricks.token)
                 EOM`
                 
-                # We connect to the databricks space
+                # For password auth there are three lines expected
+                # hostname, username, password
                 echo "$conf" | databricks configure --token
 
           - task: Bash@3
