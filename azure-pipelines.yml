@@ -14,6 +14,7 @@ variables:
   databricks.cluster.id: 
   databricks.host: https://westeurope.azuredatabricks.net
   databricks.cluster.name: single_node_73ML
+  library_name:
 
 stages:
   - stage: Test
@@ -162,29 +163,36 @@ stages:
           # - script: "pip install wheel"
           #   displayName: "Wheel"
 
-          - script: "pip install wheel && python setup.py bdist_wheel && pip install -e ."
-            displayName: "Building the package and install it"          
+          # - script: "pip install wheel && python setup.py bdist_wheel && pip install -e ."
+          #   displayName: "Building the package and install it"
 
-          # - script: |
-          #     # Get version from git tag (v1.0.0) -> (1.0.0)
-          #     git_tag=`git describe --abbrev=0 --tags | cut -d'v' -f 2`
-          #     echo "##vso[task.setvariable variable=git_tag]$git_tag"
-          #   displayName: Set GIT_TAG variable if tag is pushed
-          #   condition: contains(variables['Build.SourceBranch'], 'refs/tags/v')
+          - script: |
+              # Get version from git tag (v1.0.0) -> (1.0.0)
+              git_tag=`git describe --abbrev=0 --tags | cut -d'v' -f 2`
+              echo "##vso[task.setvariable variable=git_tag]$git_tag"
+            displayName: Set GIT_TAG variable if tag is pushed
+            condition: contains(variables['Build.SourceBranch'], 'refs/tags/v')
 
-          # - script: |
-          #     # Get variables that are shared across jobs
-          #     GIT_TAG=$(git_tag)
-          #     FALLBACK_TAG=$(fallback_tag)
-          #     echo GIT TAG: $GIT_TAG, FALLBACK_TAG: $FALLBACK_TAG
+          - script: |
+              # Get variables that are shared across jobs
+              GIT_TAG=$(git_tag)
+              FALLBACK_TAG=$(fallback_tag)
+              echo GIT TAG: $GIT_TAG, FALLBACK_TAG: $FALLBACK_TAG
 
-          #     # Export variable so python can access it
-          #     export PACKAGE_VERSION=${GIT_TAG:-${FALLBACK_TAG:-default}}
-          #     echo Version used in setup.py: $PACKAGE_VERSION
+              # Export variable so python can access it
+              export PACKAGE_VERSION=${GIT_TAG:-${FALLBACK_TAG:-default}}
+              echo Version used in setup.py: $PACKAGE_VERSION
 
-          #     # Use PACKAGE_VERSION in setup()
-          #     python setup.py bdist_wheel
-          #   displayName: Build
+              # Use PACKAGE_VERSION in setup()
+              #python setup.py bdist_wheel
+              pip install wheel && python setup.py bdist_wheel && pip install -e .
+            displayName: Build the package
+
+          - script: |
+              library_name=$(ls ./dist)
+              echo "##vso[task.setvariable variable=library_name;]$library_name"
+              echo $(library_name)
+            displayName: "Extract the name of the package"
 
           - task: CopyFiles@2
             displayName: Copy dist files
@@ -240,6 +248,27 @@ stages:
               # databricks libraries install --cluster-id=0208-153941-tea855 --whl=dbfs:/libraries/demo-0.0.dev0-py3-none-any.whl
 
           - task: Bash@3
+            displayName: 'Install Databricks CLI'
+            inputs:
+              targetType: 'inline'
+              script: 'pip install -U databricks-cli'
+
+          - task: Bash@3
+            displayName: 'Configure Databricks CLI'
+            inputs:
+              targetType: 'inline'
+              script: |
+                # We need to write the pipe the conf into databricks configure --token since
+                # that command only takes inputs from stdin. 
+                conf=`cat << EOM
+                $(databricks.host)
+                $(databricks.token)
+                EOM`
+                
+                # We connect to the databricks space
+                echo "$conf" | databricks configure --token
+
+          - task: Bash@3
             displayName: 'Install the library'
             inputs:
               targetType: 'inline'
@@ -247,7 +276,7 @@ stages:
                 cluster_id=$(databricks clusters list | grep "$(databricks.cluster.name)" | awk '{print $1}')
                 echo "##vso[task.setvariable variable=databricks.cluster.id;]$cluster_id"
 
-                # databricks libraries install --cluster-id=$(databricks.cluster.id) --whl=dbfs:/libraries
+                # databricks libraries install --cluster-id=$(databricks.cluster.id) --whl=dbfs:/libraries/$(library_name)
 
                 # echo "Checking Cluster State (Cluster ID: $(databricks.cluster.id))..."
                 # cluster_state=$(databricks clusters get --cluster-id "$(databricks.cluster.id)" | jq -r ".state")
