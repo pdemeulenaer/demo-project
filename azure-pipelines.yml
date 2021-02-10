@@ -16,7 +16,7 @@ variables:
   databricks.cluster.name: single_node_73ML
   library_name:
 
-stages:
+# stages:
   # - stage: Test
   #   jobs:
   #     - job: Test
@@ -222,19 +222,55 @@ stages:
   #   #   displayName: 'Publish documentation as artifact'
 
 
-  - stage: Deploy
-    #dependsOn: Build
-    jobs:
-      - job: Deploy
-        displayName: Deploy
-        pool:
-          vmImage: 'ubuntu-latest' 
-        steps:
-          - task: UsePythonVersion@0
-            displayName: "Use Python $(python.version)"
-            inputs:
-              versionSpec: "$(python.version)"
+  # - stage: Deploy
+  #   #dependsOn: Build
+  #   jobs:
+  #     - job: Deploy
+  #       displayName: Deploy
+  #       pool:
+  #         vmImage: 'ubuntu-latest' 
+  #       steps:
+  #         - task: UsePythonVersion@0
+  #           displayName: "Use Python $(python.version)"
+  #           inputs:
+  #             versionSpec: "$(python.version)"
               
+stages:
+- stage: Build
+  displayName: 'Train, Evaluate & Register Model'
+  jobs:
+  - job: Train
+    displayName: 'Train, Evaluate & Register Model'
+    pool:
+      vmImage: 'ubuntu-latest'
+    steps:
+    - task: UsePythonVersion@0
+      displayName: 'Use Python 3.6'
+      inputs:
+        versionSpec: '3.6'
+        addToPath: true
+        architecture: 'x64'
+    - task: Bash@3
+      displayName: 'Install Databricks CLI'
+      inputs:
+        targetType: 'inline'
+        script: 'pip install -U databricks-cli'
+    - task: Bash@3
+      displayName: 'Configure Databricks CLI'
+      inputs:
+        targetType: 'inline'
+        script: |
+          # We need to write the pipe the conf into databricks configure --token since
+          # that command only takes inputs from stdin. 
+          conf=`cat << EOM
+          $(databricks.host)
+          $(databricks.token)
+          EOM`
+          
+          # For password auth there are three lines expected
+          # hostname, username, password
+          echo "$conf" | databricks configure --token
+
           # - task: DownloadBuildArtifacts@0
           #   inputs:
           #     artifactName: demo.whl
@@ -255,45 +291,45 @@ stages:
           #     # MISSING STEP: INSTALL LIBRARY
           #     # databricks libraries install --cluster-id=0208-153941-tea855 --whl=dbfs:/libraries/demo-0.0.dev0-py3-none-any.whl
 
-          - task: Bash@3
-            displayName: 'Install Databricks CLI'
-            inputs:
-              targetType: 'inline'
-              script: 'pip install -U databricks-cli'
-          - task: Bash@3
-            displayName: 'Configure Databricks CLI'
-            inputs:
-              targetType: 'inline'
-              script: |
-                # We need to write the pipe the conf into databricks configure --token since
-                # that command only takes inputs from stdin. 
-                conf=`cat << EOM
-                $(databricks.host)
-                $(databricks.token)
-                EOM`
+          # - task: Bash@3
+          #   displayName: 'Install Databricks CLI'
+          #   inputs:
+          #     targetType: 'inline'
+          #     script: 'pip install -U databricks-cli'
+          # - task: Bash@3
+          #   displayName: 'Configure Databricks CLI'
+          #   inputs:
+          #     targetType: 'inline'
+          #     script: |
+          #       # We need to write the pipe the conf into databricks configure --token since
+          #       # that command only takes inputs from stdin. 
+          #       conf=`cat << EOM
+          #       $(databricks.host)
+          #       $(databricks.token)
+          #       EOM`
                 
-                # For password auth there are three lines expected
-                # hostname, username, password
-                echo "$conf" | databricks configure --token
+          #       # For password auth there are three lines expected
+          #       # hostname, username, password
+          #       echo "$conf" | databricks configure --token
 
-          - task: Bash@3
-            displayName: 'Copy the library to DBFS'
-            inputs:
-              targetType: 'inline'
-              script: |
-                dbfs rm dbfs:/libraries/$(library_name)
-                dbfs cp $(Build.ArtifactStagingDirectory)/demo.whl dbfs:/libraries/$(library_name)
+          # - task: Bash@3
+          #   displayName: 'Copy the library to DBFS'
+          #   inputs:
+          #     targetType: 'inline'
+          #     script: |
+          #       dbfs rm dbfs:/libraries/$(library_name)
+          #       dbfs cp $(Build.ArtifactStagingDirectory)/demo.whl dbfs:/libraries/$(library_name)
 
-          - task: Bash@3
-            displayName: 'Install the library'
-            inputs:
-              targetType: 'inline'
-              script: |
-                cluster_id=$(databricks clusters list | grep "$(databricks.cluster.name)" | awk '{print $1}')
-                echo "##vso[task.setvariable variable=databricks.cluster.id;]$cluster_id"
+          # - task: Bash@3
+          #   displayName: 'Install the library'
+          #   inputs:
+          #     targetType: 'inline'
+          #     script: |
+          #       cluster_id=$(databricks clusters list | grep "$(databricks.cluster.name)" | awk '{print $1}')
+          #       echo "##vso[task.setvariable variable=databricks.cluster.id;]$cluster_id"
 
-                # databricks libraries install --cluster-id=$(databricks.cluster.id) --whl=dbfs:/libraries/$(library_name)
+          #       # databricks libraries install --cluster-id=$(databricks.cluster.id) --whl=dbfs:/libraries/$(library_name)
 
-                # echo "Checking Cluster State (Cluster ID: $(databricks.cluster.id))..."
-                # cluster_state=$(databricks clusters get --cluster-id "$(databricks.cluster.id)" | jq -r ".state")
-                # echo "Cluster State: $cluster_state"
+          #       # echo "Checking Cluster State (Cluster ID: $(databricks.cluster.id))..."
+          #       # cluster_state=$(databricks clusters get --cluster-id "$(databricks.cluster.id)" | jq -r ".state")
+          #       # echo "Cluster State: $cluster_state"
