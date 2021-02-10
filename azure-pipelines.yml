@@ -28,12 +28,6 @@ stages:
               versionSpec: "$(python.version)"
 
           - task: Bash@3
-            displayName: 'Extract the name'
-            inputs:
-              targetType: 'inline'
-              script: 'echo $(databricks.host) && echo $(databricks.token)'
-
-          - task: Bash@3
             displayName: 'Install Databricks CLI'
             inputs:
               targetType: 'inline'
@@ -55,7 +49,7 @@ stages:
                 # # hostname, username, password
                 # echo "$conf" | databricks configure --token
                 databricks configure --token <<EOF
-                https://adb-8568615994068127.7.azuredatabricks.net/
+                $(databricks.host)
                 $(databricks.token)
                 EOF
 
