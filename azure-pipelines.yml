@@ -288,28 +288,25 @@ stages:
           #     TargetLocation: '/libraries/'
 
           #     #LocalRootFolder: '$(System.DefaultWorkingDirectory)/_pdemeulenaer.demo-project/demo.whl'
-              
-          #     # MISSING STEP: INSTALL LIBRARY
-          #     # databricks libraries install --cluster-id=0208-153941-tea855 --whl=dbfs:/libraries/demo-0.0.dev0-py3-none-any.whl
 
           - task: Bash@3
             displayName: 'Copy the library to DBFS'
             inputs:
               targetType: 'inline'
               script: |
-                databricks fs rm dbfs:/libraries/$(library.name)
+                #databricks fs rm dbfs:/libraries/$(library.name)
                 databricks fs cp -r $(Build.ArtifactStagingDirectory)/demo.whl/$(library.name) dbfs:/libraries/$(library.name)
 
           - task: Bash@3
-            displayName: 'Install the library'
+            displayName: 'Install the library in the cluster'
             inputs:
               targetType: 'inline'
               script: |
                 cluster_id=$(databricks clusters list | grep "$(databricks.cluster.name)" | awk '{print $1}')
                 echo "##vso[task.setvariable variable=databricks.cluster.id;]$cluster_id"
 
-                # databricks libraries install --cluster-id=$(databricks.cluster.id) --whl=dbfs:/libraries/$(library.name)
+                databricks libraries install --cluster-id=$(databricks.cluster.id) --whl=dbfs:/libraries/$(library.name)
 
-                # echo "Checking Cluster State (Cluster ID: $(databricks.cluster.id))..."
-                # cluster_state=$(databricks clusters get --cluster-id "$(databricks.cluster.id)" | jq -r ".state")
-                # echo "Cluster State: $cluster_state"
+                echo "Checking Cluster State (Cluster ID: $(databricks.cluster.id))..."
+                cluster_state=$(databricks clusters get --cluster-id "$(databricks.cluster.id)" | jq -r ".state")
+                echo "Cluster State: $cluster_state"
