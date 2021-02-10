@@ -162,6 +162,9 @@ stages:
           # - script: "pip install wheel"
           #   displayName: "Wheel"
 
+          - script: "pip install wheel && python setup.py bdist_wheel && pip install -e ."
+            displayName: "Building the package and install it"          
+
           # - script: |
           #     # Get version from git tag (v1.0.0) -> (1.0.0)
           #     git_tag=`git describe --abbrev=0 --tags | cut -d'v' -f 2`
