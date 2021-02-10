@@ -14,7 +14,7 @@ variables:
   databricks.cluster.id: 
   databricks.host: https://westeurope.azuredatabricks.net
   databricks.cluster.name: single_node_73ML
-  library_name:
+  library.name:
 
 stages:
   - stage: Test
@@ -190,15 +190,15 @@ stages:
 
           - script: |
               library_name=$(ls ./dist)
-              echo "##vso[task.setvariable variable=library_name;]$library_name"
-              echo $(library_name)
+              echo "##vso[task.setvariable variable=library.name;]$library_name"
+              echo $(library.name)
             displayName: "Extract the name of the package"
 
           - task: Bash@3
             displayName: 'Extract the name of the package 2'
             inputs:
               targetType: 'inline'
-              script: 'echo $(library_name)'
+              script: 'echo $(library.name)'
 
           - task: CopyFiles@2
             displayName: Copy dist files
@@ -297,8 +297,8 @@ stages:
             inputs:
               targetType: 'inline'
               script: |
-                databricks fs rm dbfs:/libraries/$(library_name)
-                databricks fs cp -R $(Build.ArtifactStagingDirectory)/demo.whl/ dbfs:/libraries/$(library_name)
+                databricks fs rm dbfs:/libraries/$(library.name)
+                databricks fs cp -r $(Build.ArtifactStagingDirectory)/demo.whl/ dbfs:/libraries/$(library.name)
 
           - task: Bash@3
             displayName: 'Install the library'
@@ -308,7 +308,7 @@ stages:
                 cluster_id=$(databricks clusters list | grep "$(databricks.cluster.name)" | awk '{print $1}')
                 echo "##vso[task.setvariable variable=databricks.cluster.id;]$cluster_id"
 
-                # databricks libraries install --cluster-id=$(databricks.cluster.id) --whl=dbfs:/libraries/$(library_name)
+                # databricks libraries install --cluster-id=$(databricks.cluster.id) --whl=dbfs:/libraries/$(library.name)
 
                 # echo "Checking Cluster State (Cluster ID: $(databricks.cluster.id))..."
                 # cluster_state=$(databricks clusters get --cluster-id "$(databricks.cluster.id)" | jq -r ".state")
