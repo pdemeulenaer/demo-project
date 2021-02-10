@@ -309,15 +309,20 @@ stages:
             displayName: 'Install the library in the cluster'
             inputs:
               targetType: 'inline'
-              script: |
-                databricks libraries install --cluster-id=$(databricks.cluster.id) --whl=dbfs:/libraries/$(library.name)
+              script: databricks libraries install --cluster-id=$(databricks.cluster.id) --whl=dbfs:/libraries/$(library.name)
 
-                echo "Checking Cluster State (Cluster ID: $(databricks.cluster.id))..."
-                cluster_state=$(databricks clusters get --cluster-id "$(databricks.cluster.id)" | jq -r ".state")
-                echo "Cluster State: $cluster_state"
+                # echo "Checking Cluster State (Cluster ID: $(databricks.cluster.id))..."
+                # cluster_state=$(databricks clusters get --cluster-id "$(databricks.cluster.id)" | jq -r ".state")
+                # echo "Cluster State: $cluster_state"
 
-                test=$(databricks libraries install --cluster-id="$(databricks.cluster.id)" --whl=dbfs:/libraries/$(library.name))
-                echo "$test"                
+                # test=$(databricks libraries install --cluster-id="$(databricks.cluster.id)" --whl=dbfs:/libraries/$(library.name))
+                # echo "$test"
+
+          - task: Bash@3
+            displayName: 'Extract the name of the package'
+            inputs:
+              targetType: 'inline'
+              script: 'echo $(library.name)'
 
           - task: Bash@3
             displayName: 'Extract text'
