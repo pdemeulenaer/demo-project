@@ -223,7 +223,7 @@ stages:
 
 
   - stage: Deploy
-    dependsOn: Build
+    #dependsOn: Build
     jobs:
       - job: Deploy
         displayName: Deploy
