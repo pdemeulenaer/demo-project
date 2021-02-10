@@ -49,7 +49,7 @@ stages:
                 # # hostname, username, password
                 # echo "$conf" | databricks configure --token
                 databricks configure --token <<EOF
-                $(databricks.host)
+                https://adb-8568615994068127.7.azuredatabricks.net/
                 $(databricks.token)
                 EOF
 
