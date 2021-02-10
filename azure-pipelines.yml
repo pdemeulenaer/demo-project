@@ -240,26 +240,37 @@ stages:
               targetType: 'inline'
               script: 'pip install -U databricks-cli'
 
-          # - task: Bash@3
-          #   displayName: 'Configure Databricks CLI'
-          #   inputs:
-          #     targetType: 'inline'
-          #     script: |
-          #       # We need to write the pipe the conf into databricks configure --token since
-          #       # that command only takes inputs from stdin. 
-          #       conf=`cat << EOM
-          #       $(databricks.host)
-          #       $(databricks.token)
-          #       EOM`
-                
-          #       # For password auth there are three lines expected
-          #       # hostname, username, password
-          #       echo "$conf" | databricks configure --token
-
-          - task: configuredatabricks@0
+          - task: Bash@3
+            displayName: 'Configure Databricks CLI'
             inputs:
-              url: '$(databricks.host)'
-              token: '$(databricks.token)'
+              targetType: 'inline'
+              script: |
+                # # We need to write the pipe the conf into databricks configure --token since
+                # # that command only takes inputs from stdin. 
+                # conf=`cat << EOM
+                # $(databricks.host)
+                # $(databricks.token)
+                # EOM`
+                
+                # # For password auth there are three lines expected
+                # # hostname, username, password
+                # echo "$conf" | databricks configure --token
+                databricks configure --token <<EOF
+                $(databricks.host)
+                $(databricks.token)
+                EOF
+
+          - task: Bash@3
+            displayName: 'Detect list of clusters'
+            inputs:
+              targetType: 'inline'
+              script: |
+                databricks clusters list          
+
+          # - task: configuredatabricks@0
+          #   inputs:
+          #     url: '$(databricks.host)'
+          #     token: '$(databricks.token)'
 
           - task: DownloadBuildArtifacts@0
             inputs:
