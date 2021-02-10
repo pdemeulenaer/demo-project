@@ -221,13 +221,14 @@ stages:
     #     publishLocation: 'Container'
     #   displayName: 'Publish documentation as artifact'
 
+
   - stage: Deploy
     dependsOn: Build
     jobs:
       - job: Deploy
         displayName: Deploy
         pool:
-          vmImage: 'vs2017-win2016'        
+          vmImage: 'ubuntu-latest' 
         steps:
           - task: UsePythonVersion@0
             displayName: "Use Python $(python.version)"
