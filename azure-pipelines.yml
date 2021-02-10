@@ -86,6 +86,9 @@ stages:
 
           - script: pip install pipenv && pipenv install -d --system --deploy --ignore-pipfile
             displayName: "Install dependencies"
+            
+          - script: "pip install wheel && python setup.py bdist_wheel && pip install -e ."
+            displayName: "Building the package and install it"
 
           # - script: pip install typed_ast && make lint
           #   displayName: Lint
@@ -226,3 +229,6 @@ stages:
               TargetLocation: '/libraries/'
 
               #LocalRootFolder: '$(System.DefaultWorkingDirectory)/_pdemeulenaer.demo-project/demo.whl'
+              
+              # MISSING STEP: INSTALL LIBRARY
+              # databricks libraries install --cluster-id=0208-153941-tea855 --whl=dbfs:/libraries/demo-0.0.dev0-py3-none-any.whl
