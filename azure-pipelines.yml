@@ -28,6 +28,12 @@ stages:
               versionSpec: "$(python.version)"
 
           - task: Bash@3
+            displayName: 'Extract the name'
+            inputs:
+              targetType: 'inline'
+              script: 'echo $(databricks.host) && echo $(databricks.token)'
+
+          - task: Bash@3
             displayName: 'Install Databricks CLI'
             inputs:
               targetType: 'inline'
