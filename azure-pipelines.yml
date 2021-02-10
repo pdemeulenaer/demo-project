@@ -222,19 +222,19 @@ stages:
               artifactName: demo.whl
               downloadPath: '$(Build.ArtifactStagingDirectory)'                 
             
-          # - task: databricksDeployDBFSFilesTask@0
-          #   inputs:
-          #     authMethod: 'bearer'
-          #     bearerToken: '$(databricks-token)'
-          #     region: 'westeurope'
-          #     LocalRootFolder: '$(Build.ArtifactStagingDirectory)/demo.whl'
-          #     FilePattern: '*.*.whl'
-          #     TargetLocation: '/libraries/'
+          - task: databricksDeployDBFSFilesTask@0
+            inputs:
+              authMethod: 'bearer'
+              bearerToken: '$(databricks-token)'
+              region: 'westeurope'
+              LocalRootFolder: '$(Build.ArtifactStagingDirectory)/demo.whl'
+              FilePattern: '*.*.whl'
+              TargetLocation: '/libraries/'
 
-          #     #LocalRootFolder: '$(System.DefaultWorkingDirectory)/_pdemeulenaer.demo-project/demo.whl'
+              #LocalRootFolder: '$(System.DefaultWorkingDirectory)/_pdemeulenaer.demo-project/demo.whl'
               
-          #     # MISSING STEP: INSTALL LIBRARY
-          #     # databricks libraries install --cluster-id=0208-153941-tea855 --whl=dbfs:/libraries/demo-0.0.dev0-py3-none-any.whl
+              # MISSING STEP: INSTALL LIBRARY
+              # databricks libraries install --cluster-id=0208-153941-tea855 --whl=dbfs:/libraries/demo-0.0.dev0-py3-none-any.whl
 
           - task: Bash@3
             displayName: 'Install the library'
