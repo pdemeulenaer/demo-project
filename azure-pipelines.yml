@@ -319,9 +319,11 @@ stages:
                 test=$(databricks libraries install --cluster-id="$(databricks.cluster.id)" --whl=dbfs:/libraries/$(library.name))
                 echo "$test"                
 
-                test2=$(databricks libraries install --cluster-id="$(databricks.cluster.id)" --whl=dbfs:/libraries/"$(library.name)")
-                echo "$test2"                                
-
+          - task: Bash@3
+            displayName: 'Extract text'
+            inputs:
+              targetType: 'inline'
+              script: echo '$(databricks libraries install --cluster-id="$(databricks.cluster.id)" --whl=dbfs:/libraries/$(library.name))'
 
 
 
