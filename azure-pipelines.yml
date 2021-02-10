@@ -312,12 +312,15 @@ stages:
               script: |
                 databricks libraries install --cluster-id=$(databricks.cluster.id) --whl=dbfs:/libraries/$(library.name)
 
-                test=$(databricks libraries install --cluster-id="$(databricks.cluster.id)" --whl=dbfs:/libraries/$(library.name))
-                echo "$test"
-
                 echo "Checking Cluster State (Cluster ID: $(databricks.cluster.id))..."
                 cluster_state=$(databricks clusters get --cluster-id "$(databricks.cluster.id)" | jq -r ".state")
                 echo "Cluster State: $cluster_state"
+
+                test=$(databricks libraries install --cluster-id="$(databricks.cluster.id)" --whl=dbfs:/libraries/$(library.name))
+                echo "$test"                
+
+                test2=$(databricks libraries install --cluster-id="$(databricks.cluster.id)" --whl=dbfs:/libraries/"$(library.name)")
+                echo "$test2"                                
 
 
 
