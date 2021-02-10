@@ -293,6 +293,12 @@ stages:
           #     # databricks libraries install --cluster-id=0208-153941-tea855 --whl=dbfs:/libraries/demo-0.0.dev0-py3-none-any.whl
 
           - task: Bash@3
+            displayName: 'Extract the name of the package 2'
+            inputs:
+              targetType: 'inline'
+              script: 'echo $(library_name) && $(Build.ArtifactStagingDirectory)/demo.whl/$(library_name)'          
+
+          - task: Bash@3
             displayName: 'Copy the library to DBFS'
             inputs:
               targetType: 'inline'
