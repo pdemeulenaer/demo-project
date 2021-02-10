@@ -235,10 +235,10 @@ stages:
             inputs:
               versionSpec: "$(python.version)"
               
-          - task: DownloadBuildArtifacts@0
-            inputs:
-              artifactName: demo.whl
-              downloadPath: '$(Build.ArtifactStagingDirectory)'                 
+          # - task: DownloadBuildArtifacts@0
+          #   inputs:
+          #     artifactName: demo.whl
+          #     downloadPath: '$(Build.ArtifactStagingDirectory)'
             
           # THIS WORKS FOR WINDOWS ONLY!
           # - task: databricksDeployDBFSFilesTask@0
