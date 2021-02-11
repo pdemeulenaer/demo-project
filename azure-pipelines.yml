@@ -230,6 +230,13 @@ stages:
         pool:
           vmImage: 'ubuntu-latest' 
         steps:
+        
+          - task: Bash@3
+            displayName: 'Extract the name of the package'
+            inputs:
+              targetType: 'inline'
+              script: 'echo $(library.name)'
+
           - task: UsePythonVersion@0
             displayName: "Use Python $(python.version)"
             inputs:
