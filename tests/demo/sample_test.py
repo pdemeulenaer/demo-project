@@ -21,7 +21,7 @@ def test_say_hello_to(names):
 
     bob, empty, none, integer, li, tup = names
 
-    assert say_hello_to(bob) == 'Hello Bobby!'
+    assert say_hello_to(bob) == 'Hello Bob!'
     assert say_hello_to(empty) == 'Hello !'
     assert say_hello_to(none) == 'Hello None!'
     assert say_hello_to(integer) == 'Hello 123!'
