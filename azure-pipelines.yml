@@ -91,7 +91,7 @@ stages:
           - script: pip install pipenv && pipenv install -d --system --deploy --ignore-pipfile
             displayName: "Install dependencies"
             
-          - script: "pip install wheel && python setup.py bdist_wheel && pip install -e ."
+          - script: "pipenv shell && pip install wheel && python setup.py bdist_wheel && pip install -e ."
             displayName: "Building the package and install it"
 
           # - script: pip install typed_ast && make lint
@@ -117,6 +117,7 @@ stages:
           
           #other test capability          
           - script: |
+              pipenv shell 
               pip install pytest
               pip install pytest-cov
               #pytest tests --doctest-modules --junitxml=junit/test-results.xml --cov=. -v --cov-report=xml --cov-report=html
