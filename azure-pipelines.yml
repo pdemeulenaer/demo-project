@@ -230,7 +230,7 @@ stages:
         pool:
           vmImage: 'ubuntu-latest' 
         steps:
-        
+
           - task: Bash@3
             displayName: 'Extract the name of the package'
             inputs:
@@ -310,7 +310,7 @@ stages:
               targetType: 'inline'
               script: |
                 cluster_id=$(databricks clusters list | grep "$(databricks.cluster.name)" | awk '{print $1}')
-                echo "##vso[task.setvariable variable=databricks.cluster.id;]$cluster_id"              
+                echo "##vso[task.setvariable variable=databricks.cluster.id;]$cluster_id"
 
           - task: Bash@3
             displayName: 'Install the library in the cluster'
