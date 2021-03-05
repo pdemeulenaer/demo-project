@@ -151,14 +151,19 @@ stages:
             inputs:
               targetType: 'inline'
               script: |
-                # Write your commands here
-                
                 cat <<EOF > format.py                
                 from bs4 import BeautifulSoup
                 bs = BeautifulSoup(open("junit/test-results.xml"), 'lxml')
                 f = open("junit/test-results-formatted.xml", "w")
                 f.write(bs.prettify())                
                 EOF 
+
+          - task: Bash@3
+            inputs:
+              targetType: 'inline'
+              script: |
+                python format.py
+                rm format.py
 
           - task: PublishTestResults@2
             condition: succeededOrFailed()
