@@ -138,14 +138,31 @@ stages:
           #     testResultsFiles: "junit/*"
           #     testRunTitle: "Python $(python.version)"
 
-          - task: PythonScript@0
+          # - task: PythonScript@0
+          #   inputs:
+          #     scriptSource: 'inline'
+          #     script: |
+          #       from bs4 import BeautifulSoup
+          #       bs = BeautifulSoup(open("junit/test-results.xml"), 'lxml')
+          #       f = open("junit/test-results-formatted.xml", "w")
+          #       f.write(bs.prettify())
+
+          - task: Bash@3
             inputs:
-              scriptSource: 'inline'
+              targetType: 'inline'
               script: |
+                # Write your commands here
+                
+                cat > format.py <<EOF
+                
                 from bs4 import BeautifulSoup
                 bs = BeautifulSoup(open("junit/test-results.xml"), 'lxml')
                 f = open("junit/test-results-formatted.xml", "w")
                 f.write(bs.prettify())
+                
+                EOF 
+                
+                python format.py
 
           - task: PublishTestResults@2
             condition: succeededOrFailed()
