@@ -94,7 +94,7 @@ stages:
           - script: pip install pipenv && python -m pipenv lock -r > requirements.txt
             displayName: 'Create requirements.txt from Pipfile'
 
-          - script: pip install -r requirements.txt
+          - script: pip install -r requirements.txt 
             displayName: 'Install requirements.txt'
             
           - script: "pip install wheel && python setup.py bdist_wheel && pip install -e ."
@@ -125,6 +125,7 @@ stages:
           - script: |
               pip install pytest
               pip install pytest-cov
+              pip install beautifulsoup4
               #pytest tests --doctest-modules --junitxml=junit/test-results.xml --cov=. -v --cov-report=xml --cov-report=html
               pytest tests/ --doctest-modules --junitxml=junit/test-results.xml --cov=. -v --ignore='venv/*' --cov-config=$(System.DefaultWorkingDirectory)/.coveragerc --cov-report=xml:$(System.DefaultWorkingDirectory)/coverage.xml 
             displayName: 'Test with pytest'
@@ -136,6 +137,15 @@ stages:
           #   inputs:
           #     testResultsFiles: "junit/*"
           #     testRunTitle: "Python $(python.version)"
+
+          - task: PythonScript@0
+            inputs:
+              scriptSource: 'inline'
+              script: |
+                from bs4 import BeautifulSoup
+                bs = BeautifulSoup(open("junit/test-results.xml"), 'xml')
+                f = open("junit/test-results-formatted.xml", "w")
+                f.write(bs.prettify())
 
           - task: PublishTestResults@2
             condition: succeededOrFailed()
