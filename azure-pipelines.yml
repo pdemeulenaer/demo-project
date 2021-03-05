@@ -147,24 +147,38 @@ stages:
           #       f = open("junit/test-results-formatted.xml", "w")
           #       f.write(bs.prettify())
 
-          - task: Bash@3
-            inputs:
-              targetType: 'inline'
-              script: |
-                cat <<EOF > format.py                
-                from bs4 import BeautifulSoup
-                bs = BeautifulSoup(open("junit/test-results.xml"), 'lxml')
-                f = open("junit/test-results-formatted.xml", "w")
-                f.write(bs.prettify())                
-                EOF 
+          # - task: Bash@3
+          #   inputs:
+          #     targetType: 'inline'
+          #     script: |
+          #       cat <<EOF > format.py                
+          #       from bs4 import BeautifulSoup
+          #       bs = BeautifulSoup(open("junit/test-results.xml"), 'lxml')
+          #       f = open("junit/test-results-formatted.xml", "w")
+          #       f.write(bs.prettify())                
+          #       EOF 
 
-          - task: Bash@3
-            inputs:
-              targetType: 'inline'
-              script: |
-                cat format.py
-                python format.py
-                rm format.py
+          # - task: Bash@3
+          #   inputs:
+          #     targetType: 'inline'
+          #     script: |
+          #       cat format.py
+          #       python format.py
+          #       rm format.py
+
+          - script: |
+              cat <<EOF > format.py                
+              from bs4 import BeautifulSoup
+              bs = BeautifulSoup(open("junit/test-results.xml"), 'lxml')
+              f = open("junit/test-results-formatted.xml", "w")
+              f.write(bs.prettify())                
+              EOF 
+
+              cat format.py
+              python format.py
+              rm format.py
+            displayName: 'Reformat unit tests'
+            continueOnError: true
 
           - task: PublishTestResults@2
             condition: succeededOrFailed()
