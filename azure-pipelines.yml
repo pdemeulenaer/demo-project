@@ -162,6 +162,7 @@ stages:
             inputs:
               targetType: 'inline'
               script: |
+                cat format.py
                 python format.py
                 rm format.py
 
